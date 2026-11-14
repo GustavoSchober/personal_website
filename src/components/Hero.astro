@@ -1,0 +1,53 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { SPECS, formatSpec } from '../data/site';
+---
+<header class="hero wrap">
+  <div class="top">
+    <span class="lab">Spec sheet · GS-2003</span>
+    <div class="top-r">
+      <span class="lab">Rev. 2026.11 · Curitiba, BR</span>
+      <ThemeToggle />
+    </div>
+  </div>
+
+  <div class="hero-main" id="main">
+    <div>
+      <h1 class="name">Gustavo<br />Schober</h1>
+    </div>
+    <div class="hero-side">
+      <svg class="dag" viewBox="0 0 368 236" role="img" aria-label="Data flow: ERP, REST APIs and scrapers feed extract and transform tasks, which build dbt marts served in dashboards to 80+ users">
+        <path class="edge" id="e1" d="M100,34 C118,34 118,74 136,74" /><path class="edge" id="e2" d="M100,114 C118,114 118,74 136,74" />
+        <path class="edge" id="e3" d="M100,194 C118,194 118,154 136,154" /><path class="edge" id="e4" d="M232,74 L268,74" />
+        <path class="edge" id="e5" d="M232,154 C250,154 250,74 268,74" /><path class="edge" id="e6" d="M316,88 L316,140" />
+        <g>
+          <circle class="p" r="3"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#e1" /></animateMotion></circle>
+          <circle class="p" r="3"><animateMotion dur="3s" begin=".7s" repeatCount="indefinite"><mpath href="#e2" /></animateMotion></circle>
+          <circle class="p" r="3"><animateMotion dur="2.8s" begin="1.2s" repeatCount="indefinite"><mpath href="#e3" /></animateMotion></circle>
+          <circle class="p" r="3"><animateMotion dur="1.6s" begin=".4s" repeatCount="indefinite"><mpath href="#e4" /></animateMotion></circle>
+          <circle class="p" r="3"><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite"><mpath href="#e5" /></animateMotion></circle>
+          <circle class="p run" r="3"><animateMotion dur="1.8s" begin=".9s" repeatCount="indefinite"><mpath href="#e6" /></animateMotion></circle>
+        </g>
+        <rect class="n" x="4" y="20" width="96" height="28" rx="4" /><text x="14" y="38">erp</text>
+        <rect class="n" x="4" y="100" width="96" height="28" rx="4" /><text x="14" y="118">rest_apis</text>
+        <rect class="n" x="4" y="180" width="96" height="28" rx="4" /><text x="14" y="198">scrapers</text>
+        <rect class="n" x="136" y="60" width="96" height="28" rx="4" /><text x="146" y="78">extract</text>
+        <rect class="n" x="136" y="140" width="96" height="28" rx="4" /><text x="146" y="158">transform</text>
+        <rect class="n" x="268" y="60" width="96" height="28" rx="4" /><text x="278" y="78">dbt_marts</text>
+        <rect class="n run" x="268" y="140" width="96" height="28" rx="4" /><text x="278" y="158">dashboards</text>
+        <text class="note" x="268" y="186"></text>
+      </svg>
+      <p class="lede">Pipelines, orchestration and data modeling across relational and non-relational databases. From the legacy ERP to the dashboard more than 80 people open every day.</p>
+      <p class="dag-run">dag_id: career · last run 07:00 · <b>success</b></p>
+    </div>
+  </div>
+
+  <div class="specs">
+    {SPECS.map((s) => (
+      <div class="spec">
+        <small>{s.label}</small>
+        <strong data-count={s.value} data-suf={s.suffix}>{formatSpec(s.value, s.suffix)}</strong>
+      </div>
+    ))}
+  </div>
+</header>

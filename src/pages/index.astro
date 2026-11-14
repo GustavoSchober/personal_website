@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Changelog from '../components/Changelog.astro';
+import KeyboardNav from '../components/KeyboardNav';
+import Closing from '../components/Closing.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+---
+<Base
+  title="Gustavo Schober · Software Engineer"
+  description="Gustavo Schober, software and data engineer in Curitiba, Brazil. Data pipelines from legacy ERPs to the dashboards people use every day."
+>
+  <Hero />
+  <main>
+    <Changelog />
+    <section class="sec kb-sec wrap" aria-labelledby="kb-h">
+      <div class="sec-head">
+        <p class="lab">Navigation</p>
+        <h2 id="kb-h">Type where you want to go</h2>
+        <p class="kb-sub">Use your own keyboard or tap the keys below.</p>
+      </div>
+      <KeyboardNav client:visible />
+    </section>
+    <Closing />
+  </main>
+  <SiteFooter />
+</Base>
+
+<script>
+  import '../scripts/motion';
+</script>

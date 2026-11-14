@@ -1,0 +1,44 @@
+---
+// Shared shape of /projects and /experiences: big title, then one row per Markdown entry.
+import { render, type CollectionEntry } from 'astro:content';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  entries: (CollectionEntry<'projects'> | CollectionEntry<'experience'>)[];
+}
+const { eyebrow, heading, entries } = Astro.props;
+const rendered = await Promise.all(entries.map(async (e) => ({ e, Content: (await render(e)).Content })));
+---
+<div class="top wrap">
+  <a class="back" href="/">← Gustavo Schober</a>
+  <ThemeToggle />
+</div>
+
+<main class="inner wrap" id="main">
+  <div class="sec-head">
+    <p class="lab">{eyebrow}</p>
+    <h1>{heading}</h1>
+  </div>
+
+  <div class="entries">
+    {rendered.map(({ e, Content }) => (
+      <article class="entry">
+        <div class="meta">
+          <p class="lab">{'stack' in e.data ? e.data.stack : e.data.period}</p>
+          <h2>{e.data.title}</h2>
+          {'org' in e.data && e.data.org && <p>{e.data.org}</p>}
+          {e.data.metric && <p class="big-num">{e.data.metric}</p>}
+          {e.data.metricLabel && <p class="lab">{e.data.metricLabel}</p>}
+        </div>
+        <div class="body">
+          <Content />
+          {e.data.chips.length > 0 && <div class="chips">{e.data.chips.map((c) => <span>{c}</span>)}</div>}
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <slot />
+</main>

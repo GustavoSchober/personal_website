@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import EntryPage from '../components/EntryPage.astro';
+import { CV_URL } from '../data/site';
+
+const experience = (await getCollection('experience')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Experience · Gustavo Schober" description="Work experience of Gustavo Schober: data pipelines, advanced SQL, BI and production integrations.">
+  <EntryPage eyebrow="Experience · 2024 – now" heading="Experience" entries={experience}>
+    <nav class="actions" aria-label="More">
+      <a class="btn primary" href={CV_URL} target="_blank" rel="noopener">Curriculum</a>
+      <a class="btn" href="/projects">Portfolio</a>
+    </nav>
+  </EntryPage>
+</Base>

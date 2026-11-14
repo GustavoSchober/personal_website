@@ -1,0 +1,26 @@
+---
+import { COMMITS, STACK_DIFF } from '../data/site';
+---
+<section class="sec wrap" aria-labelledby="log-h">
+  <div class="log-grid">
+    <div class="sec-head">
+      <p class="lab">git log --oneline career</p>
+      <h2 id="log-h">Changelog</h2>
+      <pre class="diff" aria-label="Stack changes">{STACK_DIFF.map((d) => (
+        <span class={d.added ? 'ad' : 'rm'}>{d.added ? '+' : '−'} {d.name}</span>
+      ))}</pre>
+    </div>
+    <ol class="commits">
+      {COMMITS.map((c) => (
+        <li>
+          <span class="h">{c.hash}</span>
+          <span class="m">
+            <b>{c.type}:</b> {c.msg}
+            {c.head && <span class="head">HEAD → main</span>}
+            <small>{c.meta}</small>
+          </span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

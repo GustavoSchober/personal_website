@@ -1,0 +1,25 @@
+# build output and generated types
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+*.log
+npm-debug.log*
+
+# environment variables (none today; keeps a future key out of history)
+.env
+.env.*
+!.env.example
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# deploy tool state
+.vercel/
+.netlify/

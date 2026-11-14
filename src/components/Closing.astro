@@ -1,0 +1,24 @@
+---
+import { CV_URL, GITHUB_URL, LINKEDIN_URL } from '../data/site';
+import chatgpt from '../assets/ai/chatgpt.svg?raw';
+import claude from '../assets/ai/claude.svg?raw';
+import codex from '../assets/ai/codex.svg?raw';
+import v0 from '../assets/ai/v0.svg?raw';
+import cursor from '../assets/ai/cursor.svg?raw';
+
+// Same order and icons as the mobbin.com/mcp chat card; the icons use currentColor, so they follow the theme.
+const AI = [chatgpt, claude, codex, v0, cursor];
+---
+<section class="close wrap" aria-labelledby="close-h">
+  <h2 class="statement" id="close-h">
+    <span class="nw">Your <span class="sr">AI</span><span class="ai-swap" aria-hidden="true">{AI.map((svg, i) => (
+      <span class={i === 0 ? 'on' : undefined}><Fragment set:html={svg} /></span>
+    ))}</span></span><br />generates the SQL. <span class="em">I make the data make sense.</span>
+  </h2>
+  <nav class="actions" aria-label="Main pages">
+    <a class="btn primary" href="/projects">Portfolio</a>
+    <a class="btn" href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
+    <a class="btn" href={CV_URL} target="_blank" rel="noopener">Curriculum</a>
+    <a class="btn" href={LINKEDIN_URL} target="_blank" rel="noopener">LinkedIn</a>
+  </nav>
+</section>
