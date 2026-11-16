@@ -6,8 +6,8 @@ import { GITHUB_URL } from '../data/site';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 ---
-<Base title="Projects · Gustavo Schober" description="Selected projects by Gustavo Schober: data integrations, Airflow pipelines, automation bots and a sign-language tutor.">
-  <EntryPage eyebrow="Selected work" heading="Projects" entries={projects}>
+<Base title="Portfolio · Gustavo Schober" description="Selected projects by Gustavo Schober: data integrations, Airflow pipelines, automation bots and a sign-language tutor.">
+  <EntryPage eyebrow="Selected work" heading="Portfolio" entries={projects}>
     <nav class="actions" aria-label="More">
       <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
       <a class="btn" href="/experiences">Experience</a>

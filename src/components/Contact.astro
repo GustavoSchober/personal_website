@@ -1,0 +1,78 @@
+---
+import { WEB3FORMS_KEY } from '../data/site';
+
+// "Sending" loader, adapted from the KineticTextLoader demo: the S bounces, the i is dotless and its dot hops over.
+const LOADER = [...'Sending'];
+---
+<section class="sec contact wrap" id="contact" aria-labelledby="contact-h">
+  <div class="sec-head">
+    <p class="lab">Contact</p>
+    <h2 id="contact-h">Contact me</h2>
+  </div>
+
+  <form class="mail" data-key={WEB3FORMS_KEY}>
+    <label>
+      <span class="lab">Your email</span>
+      <input type="email" name="email" required autocomplete="email" maxlength="200" />
+    </label>
+    <label>
+      <span class="lab">Subject</span>
+      <input type="text" name="subject" required maxlength="150" />
+    </label>
+    <label>
+      <span class="lab">Message</span>
+      <textarea name="message" required rows="7" maxlength="5000"></textarea>
+    </label>
+    <!-- honeypot: Web3Forms drops any submission that ticks it -->
+    <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <div class="mail-foot">
+      <p class="mail-status" role="status"></p>
+      <button class="send" type="submit" aria-label="Send message">
+        <b>&lt;</b><span class="send-code">/</span><span class="send-text">send<i>➢</i></span><b>&gt;</b>
+      </button>
+    </div>
+
+    <div class="sending" hidden>
+      <div class="ktl" aria-hidden="true">
+        <i class="ktl-dot"></i>
+        <p>{LOADER.map((c, i) => <span class={i === 0 ? 'ktl-b' : i === 4 ? 'ktl-s' : undefined}>{i === 4 ? 'ı' : c}</span>)}</p>
+      </div>
+    </div>
+  </form>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.mail')!;
+  const status = form.querySelector<HTMLElement>('.mail-status')!;
+  const button = form.querySelector<HTMLButtonElement>('.send')!;
+  const loader = form.querySelector<HTMLElement>('.sending')!;
+
+  const say = (msg: string, ok = false) => { status.textContent = msg; status.classList.toggle('ok', ok); };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.dataset.key) return say('The contact form is not set up yet. Please reach me on LinkedIn.');
+    const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    button.disabled = true;
+    loader.hidden = false;
+    say('Sending…');
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        // the visitor's address shows as the sender name and is the reply-to; the mail itself comes from Web3Forms
+        body: JSON.stringify({ ...data, access_key: form.dataset.key, from_name: data.email }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.success) throw new Error(json.message);
+      form.reset();
+      say('Sent. I will reply to your email soon.', true);
+    } catch {
+      say('Could not send right now. Your text is still here, please try again in a minute.');
+    } finally {
+      loader.hidden = true;
+      button.disabled = false;
+    }
+  });
+</script>

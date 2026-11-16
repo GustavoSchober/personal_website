@@ -60,7 +60,16 @@ export default function KeyboardNav() {
     busy.current = true;
     setOpening(word);
     const delay = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 520;
-    setTimeout(() => { location.href = ROUTES[word]; }, delay);
+    setTimeout(() => {
+      const url = ROUTES[word];
+      if (url.startsWith('/') && !url.endsWith('.pdf')) { location.href = url; return; }
+      // other sites and the CV open in a new tab, like the links elsewhere on the page; a blocked popup falls back to this tab
+      const tab = window.open(url, '_blank');
+      if (!tab) { location.href = url; return; }
+      tab.opener = null;
+      buf.current = ''; busy.current = false;
+      setTyped(''); setOpening(null);
+    }, delay);
   };
 
   const onKey = useCallback((name: string) => {

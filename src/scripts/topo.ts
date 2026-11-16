@@ -1,4 +1,5 @@
-// Contour field behind every page (marching squares over a sum of waves) that bulges under the pointer.
+// Contour field behind every page (marching squares over a sum of waves) that bulges under the mouse;
+// on touch, each tap on bare background drops a ripple instead.
 const cv = document.getElementById('topo') as HTMLCanvasElement | null;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -9,12 +10,20 @@ if (cv) {
   let W = 0, H = 0, t = 0, raf = 0, last = 0;
   let col = '', aMinor = 0, aMajor = 0;
   const m = { x: -9999, y: -9999, tx: -9999, ty: -9999, k: 0, tk: 0 }; // eased pointer and bump strength
+  const drops: { x: number; y: number; t0: number }[] = []; // t0 in seconds
+  let now = 0, lastType = '';
 
   const field = (x: number, y: number) => {
     const v = Math.sin(x * 0.0085 + t) * 1.1 + Math.cos(y * 0.011 - t * 0.7) + Math.sin((x + y) * 0.005 + t * 0.4) * 1.3
       + Math.cos(Math.hypot(x - W * 0.72, y - H * 0.3) * 0.014 - t) * 0.8;
     const dx = x - m.x, dy = y - m.y;
-    return v + m.k * 2.4 * Math.exp(-(dx * dx + dy * dy) / R2);
+    let r = v + m.k * 2.4 * Math.exp(-(dx * dx + dy * dy) / R2);
+    for (const d of drops) {
+      const age = now - d.t0, off = Math.hypot(x - d.x, y - d.y) - age * 180; // ring travels 180 px/s
+      if (off > 260 || off < -260) continue; // envelope is ~0 out there
+      r += 1.5 * Math.exp(-age * 0.8) * Math.exp(-(off * off) / 8000) * Math.cos(off * 0.07);
+    }
+    return r;
   };
 
   const readColors = () => {
@@ -26,7 +35,7 @@ if (cv) {
 
   const size = () => {
     const dpr = Math.min(2, devicePixelRatio || 1);
-    W = innerWidth; H = innerHeight;
+    W = cv.clientWidth; H = cv.clientHeight; // CSS height is 100lvh, so it does not follow the URL bar
     cv.width = W * dpr; cv.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
@@ -59,16 +68,33 @@ if (cv) {
     if (ts - last < 33) return; // ~30 fps is plenty for a slow drift
     last = ts;
     t += 0.006;
+    now = ts / 1000;
+    while (drops.length && now - drops[0].t0 > 3.5) drops.shift();
     m.x += (m.tx - m.x) * 0.12; m.y += (m.ty - m.y) * 0.12; m.k += (m.tk - m.k) * 0.08;
     draw();
   };
 
   addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return; // a finger drags the bump around and makes it jump; touch gets drops
     if (m.x < -999) { m.x = e.clientX; m.y = e.clientY; }
     m.tx = e.clientX; m.ty = e.clientY; m.tk = 1;
   }, { passive: true });
   document.addEventListener('pointerleave', () => { m.tk = 0; });
-  addEventListener('resize', () => { size(); if (reduce) draw(); });
+  addEventListener('pointerdown', (e) => { lastType = e.pointerType; }, { passive: true });
+  // click, not pointerdown: it does not fire when the touch turns into a scroll
+  addEventListener('click', (e) => {
+    if (reduce || lastType === 'mouse') return;
+    const el = e.target as Element;
+    if (el.closest('a,button,input,textarea,select,label,summary,img,svg,video,[role],[tabindex]')) return;
+    if ([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim())) return; // tapped on text
+    drops.push({ x: e.clientX, y: e.clientY, t0: now });
+    if (drops.length > 6) drops.shift();
+  });
+  addEventListener('resize', () => {
+    // phones fire resize when the URL bar slides during scroll; resizing clears the canvas and shifts the field (the "reset")
+    if (lastType && lastType !== 'mouse' && cv.clientWidth === W) return;
+    size(); if (reduce) draw();
+  });
   addEventListener('themechange', () => { readColors(); if (reduce) draw(); });
   document.addEventListener('visibilitychange', () => {
     cancelAnimationFrame(raf);

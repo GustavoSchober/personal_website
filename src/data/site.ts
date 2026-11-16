@@ -1,16 +1,18 @@
 // Everything the pages say that is not long-form content. Projects and experience live in src/content/.
 
-export const GITHUB_URL = 'https://github.com/'; // TODO: your personal GitHub profile
+export const GITHUB_URL = 'https://github.com/GustavoSchober';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/gustavo-gomes-schober';
 export const CV_URL = '/cv.pdf';
+/** Web3Forms access key (public by design, it only lets the form email you). Set it in .env, see .env.example. */
+export const WEB3FORMS_KEY = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
 
 /** What the on-screen keyboard understands; the suggestion bubble cycles through these in order. */
 export const ROUTES: Record<string, string> = {
   experiences: '/experiences',
-  projects: '/projects',
+  portfolio: '/portfolio',
   github: GITHUB_URL,
   linkedin: LINKEDIN_URL,
-  'curriculum vitae': CV_URL,
+  cv: CV_URL,
 };
 
 export const SPECS = [
