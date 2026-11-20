@@ -99,6 +99,18 @@ export default function KeyboardNav() {
         <span className="pr" aria-hidden="true">&gt;</span>
         <span>{opening ? `opening ${opening}…` : typed}</span>
         <span className="caret" aria-hidden="true" />
+        {/* phones only (CSS): tapping the line opens the native keyboard; edits are replayed as key presses */}
+        <input
+          className="typed-input" aria-label="type a page name" value={typed}
+          autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false} enterKeyHint="go"
+          onChange={(e) => {
+            const v = e.target.value.toLowerCase(), b = buf.current;
+            if (v.startsWith(b)) [...v.slice(b.length)].forEach((c) => onKey(c === ' ' ? 'space' : c));
+            else if (b.startsWith(v)) for (let i = v.length; i < b.length; i++) onKey('delete');
+            else { onKey('esc'); [...v].forEach((c) => onKey(c === ' ' ? 'space' : c)); }
+          }}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); onKey('return'); } }}
+        />
       </p>
       <InteractiveKeyboard active={active} onKeyClick={onKey} onKeyPress={onKey} />
     </div>
